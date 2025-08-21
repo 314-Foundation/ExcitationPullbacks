@@ -32,7 +32,7 @@ Excitation pullbacks for DenseNet121:
 The vanilla gradients for all the models look like noise, e.g.
 
 Vanilla gradients for ResNet50:
-![img](./media/vanilla_grad_diff/resnet50_alpha_20_steps_5_std.jpg)
+![img](./media/vanilla_grad_diff/resnet50_alpha_20_steps_5.jpg)
 
 <!-- Excitation pullbacks for ResNet50:
 ![img](./media/pullback/resnet50_alpha_20_steps_10.jpg)
