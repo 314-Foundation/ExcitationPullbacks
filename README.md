@@ -1,4 +1,4 @@
-# Excitation Pullbacks - faithul(?) explanations of ReLU networks
+# Excitation Pullbacks - faithful? explanations of ReLU networks
 
 This repository contains the source code for the paper [Tapping into the Black Box: Uncovering Aligned Representations in Pretrained Neural Networks](https://www.arxiv.org/abs/2507.22832). We describe a powerful novel explanation method for Deep Neural Networks (the so-called *Excitation Pullbacks*) and argue for it's faithfulness.
 
