@@ -74,8 +74,9 @@ def get_dataset(download=False):
     )
 
 
-def get_examples(loader):
-    target_classes = [imagenette_label_to_imagenet(l) for l in [0, 2, 4, 6, 8]]
+def get_examples(loader, all_classes=False):
+    class_indices = list(range(10)) if all_classes else [0, 2, 4, 6, 8]
+    target_classes = [imagenette_label_to_imagenet(l) for l in class_indices]
 
     selected = {}
     seen_classes = set()

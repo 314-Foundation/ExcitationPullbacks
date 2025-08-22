@@ -1,8 +1,6 @@
-# 🧠✨ Pullback is all we need for AI alignment
+# 🧠✨ Gradient is all we need for explainability
 
-This repository presents a powerful novel explanation method for Deep Neural Networks, the so-called *Excitation Pullback*, which is a simple modification of vanilla gradient, i.e. performing soft gating in the backward pass only. The quality of produced explanations and their apparent faifhfullness indicate that standard ReLU networks are **highly interpretable** if examined from the right angle.
-
-Thus, pullbacks might indeed be all we need for knowledge discovery and building explainable AI systems that are aligned with human cognition.
+This repository presents a powerful explanation method for Deep Neural Networks, the *Excitation Pullback*, which is a simple modification of vanilla gradient. Specifically, we perform soft gating in the backward pass only. The quality of produced explanations and their apparent faifhfullness indicate that standard ReLU networks are **highly interpretable** if examined from the right angle.
 
 ## 📚 Background
 
@@ -10,17 +8,17 @@ Thus, pullbacks might indeed be all we need for knowledge discovery and building
 
 📄 Check out our paper for details: [Tapping into the Black Box: Uncovering Aligned Representations in Pretrained Neural Networks](https://www.arxiv.org/abs/2507.22832).
 
+🛠️ To recreate the results from the paper, run the `pullbacks.ipynb` notebook from this repository (with the adequate env, see `requirements.txt`).
+
 ## 🤗 Demo app
 
-🚀 Play around with excitation pullbacks and witness their potential with this interactive demo app on Huggingface Spaces: [https://huggingface.co/spaces/msat/ExcitationPullbacks](https://huggingface.co/spaces/msat/ExcitationPullbacks)
-
-🛠️ To recreate the results from the paper, run the `pullbacks.ipynb` notebook from this repository (with the adequate env, see `requirements.txt`).
+🚀 You can play around with excitation pullbacks and witness their potential with this interactive demo app on Huggingface Spaces: [https://huggingface.co/spaces/msat/ExcitationPullbacks](https://huggingface.co/spaces/msat/ExcitationPullbacks)
 
 ## 🔍 Visualising pullbacks for various pretrained architectures 
 
 To visualise pullbacks, we perform a rudimentary 5-step pixel-space gradient ascent along their directions. We do this for 3 popular ImageNet-pretrained ReLU architectures: ResNet50, VGG11_BN and DenseNet121. While vanilla gradients are noisy, excitation pullbacks reveal compelling label-specific features that "just make sense". 
 
-Specifically, in images below, each cell shows the difference between the perturbed and clean image, targeting the class in the column. Diagonal: original class; off-diagonal: counterfactuals. Last column: randomly selected extra label.
+Specifically, in images below, each cell shows the difference between the perturbed and clean image, targeting the class in the column. Diagonal contains features of the original class, while off-diagonal contains counterfactuals. Last column is randomly selected extra label.
 
 ❗Note that excitation pullbacks tend to highlight similar features across architectures, which suggests that the models learn comparable feature representations. Additionally, the structure of the excitation pullbacks intuitively reflects the internal organization of each network, reinforcing our hypothesis that they indeed faithfully capture the underlying decision process of the model.
 
