@@ -1,4 +1,4 @@
-# ✨ Gradient is all we need for explainability
+# 🧠✨ Gradient is all we need for explainability
 
 This repository presents a powerful explanation method for Deep Neural Networks, the *Excitation Pullback*, which is a simple modification of vanilla gradient. Specifically, the only difference is that **we perform soft gating in the backward pass only**. 
 
@@ -6,7 +6,7 @@ This repository presents a powerful explanation method for Deep Neural Networks,
 
 💡 Furthermore, we argue that excitation pullback directionally approximates the gradient of a **kernel machine** that is implicitly learned by the network and encoded in its *highly activated paths*. We claim that this kernel machine mainly supports the network's decision boundary.
 
-Thus, it seems that gradient is all we really need to explain neural networks and discover new knowledge in data.
+Thus, it seems that gradients (or rather - more generally - pullbacks) are all we really need to explain ReLU networks and discover new knowledge in data.
 
 ## 📚 Technical background
 
