@@ -1,4 +1,4 @@
-# 🧠✨ Excitation Pullbacks - faithful explanations of ReLU networks.
+# 🧠✨ Excitation Pullbacks - faithful explanations of ReLU networks
 
 This repository presents a powerful explanation method for Deep Neural Networks, the *Excitation Pullback*, which is a simple modification of vanilla gradient. Specifically, the only difference is that **we perform soft gating in the backward pass only**. 
 

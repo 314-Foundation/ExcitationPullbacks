@@ -62,6 +62,28 @@ def get_transform():
     )
 
 
+class ConditionalTransform(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.resize_224 = T.Resize(224)
+        self.resize_256 = T.Resize(256)
+        self.crop_224 = T.CenterCrop(224)
+        self.to_tensor = T.ToTensor()
+        self.normalize = my_normalize()
+
+    def __call__(self, img):
+        # img: PIL.Image
+        w, h = img.size
+        if w == h:
+            img = self.resize_224(img)
+        else:
+            img = self.resize_256(img)
+            img = self.crop_224(img)
+        img = self.to_tensor(img)
+        img = self.normalize(img)
+        return img
+
+
 def get_dataset(download=False):
     return Imagenette(
         root="./data",
