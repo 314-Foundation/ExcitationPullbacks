@@ -55,7 +55,6 @@ def get_transform():
     return transforms.Compose(
         [
             transforms.Resize(256),
-            # transforms.Resize(224),
             transforms.CenterCrop(224),
             transforms.ToTensor(),
             my_normalize(),
