@@ -6,21 +6,21 @@ This repository presents a powerful explanation method for Deep Neural Networks,
 
 💡 Furthermore, we argue that excitation pullback directionally approximates the gradient of a **kernel machine** that is implicitly learned by the network and encoded in its *highly activated paths*. We claim that this kernel machine mainly supports the network's decision boundary.
 
-Thus, it seems that gradients (or rather - more generally - pullbacks) are all we really need to explain ReLU networks and discover new knowledge in data.
-
-## 📚 Technical background
-
-We dive deeper into the technical details of excitation pullbacks in our recent paper: [Tapping into the Black Box: Uncovering Aligned Representations in Pretrained Neural Networks](https://www.arxiv.org/abs/2507.22832).
-
-To recreate the results, run the `pullbacks.ipynb` notebook from this repository (with the adequate env, see `requirements.txt`).
+Thus, it seems that gradients (or rather - more generally - pullbacks) are all we really need to explain ReLU networks and discover new knowledge in data!
 
 ## 🤗 Demo app
 
 You can play around with excitation pullbacks and feel their potential with this interactive demo app on Huggingface Spaces: [https://huggingface.co/spaces/msat/ExcitationPullbacks](https://huggingface.co/spaces/msat/ExcitationPullbacks)
 
+## 📚 Technical background
+
+To dive deeper into the technical details of excitation pullbacks see our recent paper: [Tapping into the Black Box: Uncovering Aligned Representations in Pretrained Neural Networks](https://www.arxiv.org/abs/2507.22832).
+
+To recreate the results, run the `pullbacks.ipynb` notebook from this repository (with the adequate env, see `requirements.txt`).
+
 ## ImageNet examples
 
-To visualise pullbacks, we perform a rudimentary 5-step pixel-space gradient ascent along their directions. We do this for 3 popular ImageNet-pretrained ReLU architectures: ResNet50, VGG11_BN and DenseNet121. While vanilla gradients are noisy, excitation pullbacks reveal compelling label-specific features that "just make sense". 
+To visualise pullbacks, we perform a rudimentary 5-step pixel-space gradient ascent along their directions. We do this for 3 popular ImageNet-pretrained ReLU architectures: ResNet50, VGG11_BN and DenseNet121, this exact selection being motivated in the paper. While vanilla gradients are noisy, excitation pullbacks reveal compelling label-specific features that "just make sense". 
 
 Specifically, in images below, each cell shows the difference between the perturbed and clean image, targeting the class in the column. Diagonal contains features of the original class, while off-diagonal contains counterfactuals. Last column is randomly selected extra label.
 
