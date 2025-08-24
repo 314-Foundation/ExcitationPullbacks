@@ -264,7 +264,7 @@ with gr.Blocks() as demo:
                     value=10,
                     label="Steps",
                     info="N steps for Projected Gradient Ascent",
-                    maximum=100,
+                    maximum=10000,
                     minimum=1,
                     precision=0,
                 )
