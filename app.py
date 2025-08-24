@@ -264,7 +264,7 @@ with gr.Blocks() as demo:
                     value=10,
                     label="Steps",
                     info="N steps for Projected Gradient Ascent",
-                    maximum=10000,
+                    maximum=1000,
                     minimum=1,
                     precision=0,
                 )
@@ -279,7 +279,8 @@ with gr.Blocks() as demo:
                     value=100,
                     label="Eps",
                     info="Maximum perturbation (in L2 norm)",
-                    minimum=1,
+                    minimum=10,
+                    step=10,
                 )
                 temp = gr.Number(
                     value=0.3,
