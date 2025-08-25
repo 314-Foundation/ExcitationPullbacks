@@ -38,7 +38,7 @@ DEVICE = torch.device(device_)
 INIT_CLASS = 0
 
 # Predefined class names (shortened for demo)
-IMAGENETTE_CLASSES = {
+PREDEFINED_CLASSES = {
     0: "tench",
     217: "English springer",
     482: "cassette player",
@@ -49,6 +49,7 @@ IMAGENETTE_CLASSES = {
     571: "gas pump",
     574: "golf ball",
     701: "parachute",
+    9: "ostrich",
 }
 
 
@@ -96,14 +97,15 @@ def sample_val_img():
 EXAMPLES_DIR = "examples"
 predefined_files = sorted(
     [
-        f
+        os.path.join(EXAMPLES_DIR, f)
         for f in os.listdir(EXAMPLES_DIR)
         if f.lower().endswith((".png", ".jpg", ".jpeg"))
     ]
 )
+# PREDEFINED_IMAGES = predefined_files
+# [os.path.join(EXAMPLES_DIR, fname)] for fname in predefined_files
 PREDEFINED_IMAGES = [
-    Image.open(os.path.join(EXAMPLES_DIR, fname)).convert("RGB")
-    for fname in predefined_files
+    np.array(Image.open(fname).convert("RGB")) for fname in predefined_files
 ]
 
 
@@ -129,6 +131,8 @@ MODEL_MAP = {
     "VGG11_BN": vgg11_bn,
     "DenseNet121": densenet121,
 }
+INIT_MODEL_NAME = "ResNet50"
+INIT_MODEL_TEMP = 0.3
 
 current_model = None
 current_model_params = None
@@ -176,7 +180,6 @@ def run_pullback(
     img_tensor = T.ToPILImage()(input_image)
     img_tensor = image_transform(img_tensor).unsqueeze(0).to(DEVICE)
 
-    # return (img_tensor, img_tensor), (img_tensor, img_tensor)
     model = get_model(model_name, temp=temp)
 
     # Prepare target
@@ -206,7 +209,6 @@ def run_pullback(
 
 
 with gr.Blocks() as demo:
-    # gr.Markdown("# ")
     gr.Markdown(
         """
         # Excitation Pullbacks - faithful explanations of ReLU networks
@@ -218,47 +220,61 @@ with gr.Blocks() as demo:
         with gr.Column():
             gr.Markdown(
                 """
-                Select an image - either sample from [Imagenette](https://github.com/fastai/imagenette) dataset, a predefined example or upload your own. Square images are resized to 224x224 pixels, others are first resized to 256x256 px and then center-cropped to 224x224 pixels.
+                Select an input image - either sample from [Imagenette](https://github.com/fastai/imagenette) dataset, a predefined example or upload your own. Square images are resized to 224x224 pixels, others are first resized to 256x256 px and then center-cropped to 224x224 pixels.
                 """
             )
             input_image = gr.Image(
                 type="numpy", label="Input Image", value=PREDEFINED_IMAGES[0]
             )
             sample_from_val = gr.Button("Sample from Imagenette val")
-            gr.Examples(
-                examples=[
-                    os.path.join(EXAMPLES_DIR, fname) for fname in predefined_files
-                ],
+            examples = gr.Examples(
+                examples=predefined_files,
+                # examples=PREDEFINED_IMAGES,
                 inputs=[input_image],
-                run_on_click=False,
-                # example_labels=list(IMAGENETTE_CLASSES.keys()),
-                label=f"Example images with the following respective ImageNet class labels: {list(IMAGENETTE_CLASSES.keys())}",
-                preload=1,
+                label=f"Example images from Imagenette val (corresponding to Example classes)",
             )
 
         with gr.Column():
             gr.Markdown(
                 """
-                Select a class and generate an explanation - a perturbation toward that class along the excitaton pullback (via Projected Gradient Ascent). Very low temperature approximates vanilla gradients, while very high temperature linearizes the model.
+                Select a target class and generate a (counterfactual) explanation - a perturbation toward that class along the excitaton pullback (via Projected Gradient Ascent). Very low temperature approximates vanilla gradients, while very high temperature linearizes the model.
                 """
             )
             with gr.Row():
+                # with gr.Column():
+                target_class = gr.Dropdown(
+                    label="Target Class (ImageNet)",
+                    info="idx - class name",
+                    choices=[
+                        (f"{idx} - {name}", int(idx))
+                        for idx, name in IMAGENET_LABELS.items()
+                    ],
+                    value=INIT_CLASS,
+                    allow_custom_value=False,
+                    # render=False,
+                )
+                # with gr.Column():
                 model_name = gr.Dropdown(
                     list(MODEL_MAP.keys()),
-                    value="ResNet50",
+                    value=INIT_MODEL_NAME,
                     label="Model",
-                    info="Select ImageNet-pretrained ReLU model",
+                    info="ImageNet-pretrained ReLU model",
                 )
-                target_class = gr.Number(
-                    value=INIT_CLASS,
-                    label="Target Class (ImageNet idx)",
-                    info='<a href="https://gist.github.com/yrevar/942d3a0ac09ec9e5eb3a" target="_blank">See ImageNet class names</a>',
-                    minimum=0,
-                    maximum=999,
-                    step=1,
-                    precision=0,
+            with gr.Row():
+                examples = gr.Examples(
+                    # examples=[
+                    #     [os.path.join(EXAMPLES_DIR, fname)] for fname in predefined_files
+                    # ],
+                    # examples=predefined_files,
+                    examples=list(PREDEFINED_CLASSES.keys()),
+                    example_labels=[
+                        f"{cls} - {PREDEFINED_CLASSES[cls]}"
+                        for cls in PREDEFINED_CLASSES.keys()
+                    ],
+                    inputs=[target_class],
+                    label=f'Example classes (corresponding to Example images + "ostrich")',
+                    examples_per_page=11,
                 )
-            # class_name_output = gr.Textbox(label="Target class name", interactive=False)
             with gr.Row():
                 steps = gr.Number(
                     value=10,
@@ -283,7 +299,7 @@ with gr.Blocks() as demo:
                     step=10,
                 )
                 temp = gr.Number(
-                    value=0.3,
+                    value=INIT_MODEL_TEMP,
                     label="Temp",
                     info="Temperature for soft gating (sigmoid)",
                     minimum=0.01,
@@ -291,13 +307,8 @@ with gr.Blocks() as demo:
                 )
             run_button = gr.ClearButton(components=None, value="Explain!")
             with gr.Row():
-                class_name_output = gr.Textbox(
-                    label="Target class name",
-                    interactive=False,
-                    value=get_class_name(INIT_CLASS),
-                )
                 predicted_class_name_output = gr.Textbox(
-                    label="Source image predicted top5 labels",
+                    label="Input image predicted top5 labels",
                     interactive=False,
                 )
     with gr.Row():
@@ -314,7 +325,7 @@ with gr.Blocks() as demo:
         )
         perturbed_img = gr.ImageSlider(
             # perturbed_img = gr.Image(
-            label="Perturbed / Source",
+            label="Perturbed / Input",
             # max_height=800,
             max_height=500,
             # show_fullscreen_button=False,
@@ -325,12 +336,6 @@ with gr.Blocks() as demo:
     run_button.add(perturbed_img)
     run_button.add(diff_img)
     sample_from_val.click(fn=sample_val_img, outputs=input_image)
-
-    target_class.change(
-        fn=get_class_name,
-        inputs=[target_class],
-        outputs=[class_name_output],
-    )
 
     run_button.click(
         fn=run_pullback,
@@ -347,4 +352,5 @@ with gr.Blocks() as demo:
     )
 
 if __name__ == "__main__":
+    get_model(INIT_MODEL_NAME, INIT_MODEL_TEMP)  # preload default model
     demo.launch()
